@@ -91,8 +91,8 @@ function convertirDivisas() {
           swal("Error", "Seleccione una moneda de destino válida.", "error");
           return;
       }
-      break;
-    case "eur": // Euro
+      break;d
+    case "eur": // Euroo
       switch (monedaDestino) {
         case "ars": // Peso argentino
           montoConversion = monto * valorEuro

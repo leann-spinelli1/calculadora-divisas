@@ -65,7 +65,7 @@ body {
     top: 50%;
     right: 10px;
     transform: translateY(-50%);
-    border-width: 8px 6px 0;
+    border-width: 8px 7px 0;
     border-color: #343a40 transparent transparent;
     border-style: solid;
     pointer-events: none;
