@@ -1,132 +1,149 @@
-// Variables
-// se fijan las tasas de cambio
-let valorDolar = 489;
-let valorEuro = 536;
-let valorYuan = 67;
+// Variables de conversión
+let valorDolar = 549;
+let valorEuro = 608;
+let valorYen = 76;
+let tasaYenUSD = 0.14;
+let tasaYenEUR = 0.13;
+let tasaUSDEUR = 0.90;
 
-// array donde se van a guardar las conversiones temporalmente, aca se crea
+// referencias
+const selectMonedaOrigen = document.getElementById("moneda-origen");
+const selectMonedaDestino = document.getElementById("moneda-destino");
+const inputMonto = document.getElementById("monto");
+const botonConvertir = document.getElementById("boton-convertir");
+const botonIntercambiar = document.getElementById("btn-intercambiar");
+const resultadoElement = document.querySelector(".resultado p");
 
-let historialConversiones = [];
+// Función para mostrar el cartel de conversión
 
-// Agregar conversión al historial
-function agregarConversion(monto, divisaOrigen, divisaDestino, resultado) {
-  const conversion = {
-    cantidad: monto,
-    divisaOrigen: divisaOrigen,
-    divisaDestino: divisaDestino,
-    resultado: resultado
-  };
-  historialConversiones.push(conversion);
-}
-
-// Mostrar historial de conversiones
-function mostrarHistorial() {
-  let historialTexto = "Historial de conversiones:\n";
-  historialConversiones.forEach((conversion, index) => {
-    historialTexto += (index + 1) + ". " + conversion.cantidad + " " + conversion.divisaOrigen + " = " + conversion.resultado + " " + conversion.divisaDestino + "\n";
-  });
-  alert(historialTexto);
-}
-
-// Mensaje de despedida
-function mensajeDespedida() {
-  alert('Hasta pronto! Gracias por utilizar el conversor de divisas.');
+function mostrarCartelConversion(cantidadOriginal, divisaOrigen, divisaDestino, cantidadConvertida) {
+  swal("¡Enhorabuena!", `La cantidad de ${cantidadOriginal} ${divisaOrigen} son ${cantidadConvertida.toFixed(2)} ${divisaDestino}.`, "success");
 }
 
 // Función para convertir divisas
 function convertirDivisas() {
-  let repetirConversion = true;
+  // Obtener los valores seleccionados y el monto ingresado
+  const monedaOrigen = selectMonedaOrigen.value;
+  const monedaDestino = selectMonedaDestino.value;
+  const monto = parseFloat(inputMonto.value);
 
-  while (repetirConversion) {
-    let seleccionDivisa = parseInt(prompt('Bienvenido a la calculadora de divisas. Seleccione qué divisa desea para convertir:\n1. Dólar\n2. Euro\n3. Yuan\n4. Consultar la paridad de alguna divisa en específico\n5. Ver historial\n6. Buscar conversiones'));
-    //uso switch en vez de if-else porque es mucho más simple y no se usan tantas líneas
-    switch (seleccionDivisa) {
-      case 1: // Dólar
-      case 2: // Euro
-      case 3: // Yuan
-        let cantidadCalcular = parseFloat(prompt('Seleccione la cantidad de pesos argentinos (ARS) que desea convertir a la divisa elegida.'));
-        let montoConversion;
+  let monedaDestinoNombre;
 
-        switch (seleccionDivisa) {
-          case 1: // Dólar
-            montoConversion = cantidadCalcular / valorDolar;
-            agregarConversion(cantidadCalcular, "ARS", "USD", montoConversion);
-            alert("Enhorabuena, su solicitud se ha procesado correctamente. La cantidad de " + cantidadCalcular + " ARS son " + montoConversion + " USD.");
-            break;
-          case 2: // Euro
-            montoConversion = cantidadCalcular / valorEuro;
-            agregarConversion(cantidadCalcular, "ARS", "EUR", montoConversion);
-            alert("Enhorabuena, su solicitud se ha procesado correctamente. La cantidad de " + cantidadCalcular + " ARS son " + montoConversion + " EUR.");
-            break;
-          case 3: // Yuan
-            montoConversion = cantidadCalcular / valorYuan;
-            agregarConversion(cantidadCalcular, "ARS", "CNY", montoConversion);
-            alert("Enhorabuena, su solicitud se ha procesado correctamente. La cantidad de " + cantidadCalcular + " ARS son " + montoConversion + " CNY.");
-            break;
-        }
-        break;
-      case 4: // Consultar la paridad de una divisa
-        let seleccionOpcionParidad = parseInt(prompt('Seleccione la divisa de la cual desea averiguar la paridad.\n1. Dólar\n2. Euro\n3. Yuan'));
-
-        switch (seleccionOpcionParidad) {
-          case 1: // Dólar
-            alert("Actualmente 1 dólar es igual a ARS$" + valorDolar);
-            break;
-          case 2: // Euro
-            alert("Actualmente 1 euro es igual a ARS$" + valorEuro);
-            break;
-          case 3: // Yuan
-            alert("Actualmente 1 yuan es igual a ARS$" + valorYuan);
-            break;
-          default:
-            alert('Selección inválida.');
-            break;
-        }
-        break;
-      case 5: // Ver historial
-        mostrarHistorial();
-        break;
-      case 6: // Buscar conversiones
-        const divisaDestinoBusqueda = prompt('Ingrese la divisa a la cual desea buscar conversiones:\n1. USD\n2. EUR\n3. CNY');
-
-        let conversionesFiltradas = historialConversiones.filter(conversion => {
-          return conversion.divisaDestino === getDivisaDestino(divisaDestinoBusqueda);
-        });
-
-        if (conversionesFiltradas.length === 0) {
-          alert('No se encontraron conversiones que coincidan con los criterios de búsqueda.');
-        } else {
-          let resultadoTexto = 'Conversiones encontradas:\n';
-          conversionesFiltradas.forEach((conversion, index) => {
-            resultadoTexto += `${index + 1}. ${conversion.cantidad} ${conversion.divisaOrigen} = ${conversion.resultado} ${conversion.divisaDestino}\n`;
-          });
-          alert(resultadoTexto);
-        }
-        break;
-      default:
-        alert('Selección inválida. Vuelva a intentarlo.');
-        break;
-    }
-    //uso confirm porque venia usando if-else y es mas simple
-    repetirConversion = confirm('¿Desea realizar otra operación?');
-  }
-
-  mensajeDespedida();
-}
-
-// Obtener divisa de destino
-function getDivisaDestino(opcion) {
-  switch (opcion) {
-    case "1":
-      return "USD";
-    case "2":
-      return "EUR";
-    case "3":
-      return "CNY";
+  switch (monedaDestino) {
+    case "usd":
+      monedaDestinoNombre = "USD (Dólar estadounidense)";
+      break;
+    case "eur":
+      monedaDestinoNombre = "EUR (Euro)";
+      break;
+    case "yen":
+      monedaDestinoNombre = "YEN (Yen japonés)";
+      break;
+    case "ars":
+      monedaDestinoNombre = "ARS (Pesos argentinos)";
+      break;
     default:
-      return "";
+      monedaDestinoNombre = "";
+      break;
   }
+
+  if (isNaN(monto) || monto <= 0) {
+    swal("Error", "Ingrese un monto válido mayor a 0.", "error");
+    return;
+  }
+
+  let montoConversion;
+  switch (monedaOrigen) {
+    case "ars": // Peso argentino
+      switch (monedaDestino) {
+        case "usd": // Dólar
+          montoConversion = monto / valorDolar;
+          mostrarCartelConversion(monto, "ARS", "USD", montoConversion);
+          break;
+        case "eur": // Euro
+          montoConversion = monto / valorEuro;
+          mostrarCartelConversion(monto, "ARS", "EUR", montoConversion);
+          break;
+        case "yen": // Yen
+          montoConversion = monto / valorYen;
+          mostrarCartelConversion(monto, "ARS", "YEN", montoConversion);
+          break;
+        default:
+          swal("Error", "Seleccione una moneda de destino válida.", "error");
+          return;
+      }
+      break;
+    case "usd": // Dólar
+      switch (monedaDestino) {
+        case "ars": // Peso argentino
+          montoConversion = monto * valorDolar;
+          mostrarCartelConversion(monto, "USD", "ARS", montoConversion);
+          break;
+        case "eur": // Euro
+          montoConversion = monto * tasaUSDEUR;
+          mostrarCartelConversion(monto, "USD", "EUR", montoConversion);
+          break;
+        case "yen": // Yen
+          montoConversion = monto * tasaYenUSD;
+          mostrarCartelConversion(monto, "USD", "YEN", montoConversion);
+          break;
+        default:
+          swal("Error", "Seleccione una moneda de destino válida.", "error");
+          return;
+      }
+      break;d
+    case "eur": // Euroo
+      switch (monedaDestino) {
+        case "ars": // Peso argentino
+          montoConversion = monto * valorEuro
+          mostrarCartelConversion(monto, "EUR", "ARS", montoConversion);
+          break;
+        case "usd": // Dólar
+          montoConversion = monto / tasaUSDEUR;
+          mostrarCartelConversion(monto, "EUR", "USD", montoConversion);
+          break;
+        case "yen": // Yen
+          montoConversion = monto * tasaYenEUR;
+          mostrarCartelConversion(monto, "EUR", "YEN", montoConversion);
+          break;
+        default:
+          swal("Error", "Seleccione una moneda de destino válida.", "error");
+          return;
+      }
+      break;
+    case "yen": // Yen
+      switch (monedaDestino) {
+        case "ars": // Peso argentino
+          montoConversion = monto * valorYen;
+          mostrarCartelConversion(monto, "YEN", "ARS", montoConversion);
+          break;
+        case "usd": // Dólar
+          montoConversion = monto / tasaYenUSD;
+          mostrarCartelConversion(monto, "YEN", "USD", montoConversion);
+          break;
+        case "eur": // Euro
+          montoConversion = monto / tasaYenEUR;
+          mostrarCartelConversion(monto, "YEN", "EUR", montoConversion);
+          break;
+        default:
+          swal("Error", "Seleccione una moneda de destino válida.", "error");
+          return;
+      }
+      break;
+    default:
+      swal("Error", "Seleccione una moneda de origen válida.", "error");
+      return;
+  }
+
+  resultadoElement.textContent = montoConversion.toFixed(2) + " " + monedaDestinoNombre;
 }
 
-// Ejecutar la función para convertir divisas
-convertirDivisas();
+// Evento al hacer clic en el botón "Convertir"
+botonConvertir.addEventListener("click", convertirDivisas);
+
+// Evento al hacer clic en el botón "Intercambiar"
+botonIntercambiar.addEventListener("click", function() {
+  const temp = selectMonedaOrigen.value;
+  selectMonedaOrigen.value = selectMonedaDestino.value;
+  selectMonedaDestino.value = temp;
+});
