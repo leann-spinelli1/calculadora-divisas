@@ -14,6 +14,26 @@ const botonConvertir = document.getElementById("boton-convertir");
 const botonIntercambiar = document.getElementById("btn-intercambiar");
 const resultadoElement = document.querySelector(".resultado p");
 
+function mostrarValorDolarBlue() {
+  const url = 'http://escuderokevin.com.ar:7070/api/dolarblue';
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const dolarBlueValue = data.blue.value;
+      document.getElementById('dolarValor').textContent = dolarBlueValue.toFixed(2) + ' ARS';
+    })
+    .catch(error => {
+      console.error('Error al obtener el valor del dólar blue:', error);
+      document.getElementById('dolarValor').textContent = 'Error al obtener el valor';
+    });
+}
+
+// Llamar a la función para mostrar el valor del dólar blue
+mostrarValorDolarBlue();
+
+
+
 // Función para mostrar el cartel de conversión
 
 function mostrarCartelConversion(cantidadOriginal, divisaOrigen, divisaDestino, cantidadConvertida) {
