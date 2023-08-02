@@ -68,7 +68,7 @@ function convertirDivisas() {
   }
 
   if (isNaN(monto) || monto <= 0) {
-    swal("Error", "Ingrese un monto válido mayor a 0.", "error");
+    swal("Error", "Ingrese un monto válido mayor a 0", "error");
     return;
   }
 
